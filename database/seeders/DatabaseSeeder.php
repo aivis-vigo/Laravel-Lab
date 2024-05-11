@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Models\Manufacturer;
+use App\Models\CarModel;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -74,5 +76,8 @@ class DatabaseSeeder extends Seeder
         ]);
         $css_comments = Comment::factory()->count(75)->make()->toArray();
         $css_post->comments()->createMany($css_comments);
+
+        Manufacturer::factory()->count(5)->create();
+        CarModel::factory()->count(5)->create();
     }
 }

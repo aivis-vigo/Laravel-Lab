@@ -7,6 +7,6 @@ use Illuminate\Support\Facades\URL;
 Route::redirect('/', '/posts');
 Route::resource('posts', PostController::class);
 
-URL::forceScheme('https');
+URL::forceScheme('http');
 
 require __DIR__.'/auth.php';
