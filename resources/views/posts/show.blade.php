@@ -10,7 +10,7 @@
       <div>
           <h2>{{ $post->title }}</h2>
           <p>{{ $post->content }}</p>
-          <p>Author: {{ $post->author }}</p>
+          <p>Author: {{ $post->author->name }}</p>
           <p>Published at: {{ $post->created_at->format("d.m.Y H:i:s") }}</p>
           <p>Category: {{ $post->category->title }}</p>
           <h3>Comments:</h3>

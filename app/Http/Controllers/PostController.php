@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 use App\Models\Post;
 use App\Models\Category;
 
@@ -24,9 +25,10 @@ class PostController extends Controller
      */
     public function create()
     {
+        $users = User::all();
         $categories = Category::all();
         $post = new Post;
-        return view('posts.create', compact('categories'))->with('post', $post);
+        return view('posts.create', compact('users', 'categories'))->with('post', $post);
     }
 
     /**
@@ -38,7 +40,7 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'author' => 'required|string|max:255',
+            'author_id' => 'required|integer|exists:users,id',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -46,7 +48,7 @@ class PostController extends Controller
         $newPost = new Post;
         $newPost->title = $validatedData['title'];
         $newPost->body = $validatedData['body'];
-        $newPost->author = $validatedData['author'];
+        $newPost->author_id = $validatedData['author_id'];
         $newPost->category_id = $validatedData['category_id'];
         $newPost->save();
 
@@ -59,8 +61,9 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
+        $users = User::all();
         $post = Post::find($id);
-        return view('posts.show', compact('post'));
+        return view('posts.show', compact('users', 'post'));
     }
 
     /**
@@ -68,9 +71,10 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
+        $users = User::all();
         $post = Post::find($id);
         $categories = Category::all();
-        return view('posts.edit', compact('post', 'categories'));
+        return view('posts.edit', compact('users', 'post', 'categories'));
     }
 
     /**
@@ -79,7 +83,7 @@ class PostController extends Controller
     public function update(Request $request, string $id)
     {
         //very basic validation - there shold be at least some data in the fields
-        if ($request->title == null || $request->author == null || $request->body == null) {
+        if ($request->title == null || $request->author_id == null || $request->body == null) {
             //if you deleted everyting - go back and fill it!
             return redirect()->route('posts.edit', $id);
         }
@@ -87,7 +91,7 @@ class PostController extends Controller
         //all clear - updating the post!
         $post = Post::find($id);
         $post->title = $request->title;
-        $post->author = $request->author;
+        $post->author_id = $request->author_id;
         $post->body = $request->body;
         $post->save();
         $post = Post::find($id);

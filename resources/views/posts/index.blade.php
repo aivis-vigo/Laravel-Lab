@@ -19,7 +19,7 @@
             </a>
         </h2
         <p>
-            An article by <em>{{$post->author}}</em> published on {{$post->created_at}}
+            An article by <em>{{$post->author->name}}</em> published on {{$post->created_at}}
         </p>
         <p>{{ $post->body }}</p>
 

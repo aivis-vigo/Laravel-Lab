@@ -18,10 +18,13 @@
             <label for="body">Body:</label>
             <textarea id="body" name="body" required cols="80" rows="20">{{ $post->body }}</textarea>
         </div>
-        <div>
-            <label for="author">Author:</label> <!-- corrected id to match input -->
-            <input type="text" id="author" name="author" value="{{ $post->author }}" required>
-        </div>
+        <select name="author_id" required>
+            @foreach($users as $user)
+                <option value="{{ $user->id }}" {{ (isset($post) && $post->author_id == $user->id) ? 'selected' : '' }}>
+                    {{ $user->name }}
+                </option>
+            @endforeach
+        </select>
         <div>
             <label for="category">Category:</label>
             <select id="category" name="category_id">

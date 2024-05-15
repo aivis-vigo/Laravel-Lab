@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Comment;
-use App\Models\Manufacturer;
-use App\Models\CarModel;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,67 +16,64 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Category::create(['title' => 'Laravel']);
-        Category::create(['title' => 'PHP']);
-        Category::create(['title' => 'JavaScript']);
-        Category::create(['title' => 'Vue.js']);
-        Category::create(['title' => 'React']);
-        Category::create(['title' => 'CSS']);
+        // Seed the users table
+        User::factory()->count(10)->create();
 
-        $laravel_category = Category::where('title', 'Laravel')->first();
-        $php_category = Category::where('title', 'PHP')->first();
-        $javascript_category = Category::where('title', 'JavaScript')->first();
-        $css_category = Category::where('title', 'CSS')->first();
+        // Seed the categories
+        $categories = [
+            'Laravel', 'PHP', 'JavaScript', 'Vue.js', 'React', 'CSS'
+        ];
 
-        // 1st post
+        foreach ($categories as $category) {
+            Category::create(['title' => $category]);
+        }
+
+        $laravelCategory = Category::where('title', 'Laravel')->first();
+        $phpCategory = Category::where('title', 'PHP')->first();
+        $javascriptCategory = Category::where('title', 'JavaScript')->first();
+        $cssCategory = Category::where('title', 'CSS')->first();
+
+        // Seed the posts and comments
+        // Assuming users are created with ids 1-10, we can assign them randomly
         Post::create([
             'title' => 'Laravel 11 is released',
-            'author' => 'John Doe',
+            'author_id' => rand(1, 10),  // Random user as author
             'body' => 'Laravel 11 is released and it has many new features.',
-            'category_id' => $laravel_category->id,
+            'category_id' => $laravelCategory->id,
+        ])->comments()->createMany([
+            ['body' => 'This is a bad post.', 'author_id' => rand(1, 10)],
+            ['body' => 'I hate Laravel.', 'author_id' => rand(1, 10)],
+            ['body' => 'This is a terrible post.', 'author_id' => rand(1, 10)],
+            ['body' => 'I dislike Laravel.', 'author_id' => rand(1, 10)]
         ]);
-        $firstpost = Post::query()->latest()->first();
-        $firstpost->comments()->createMany([
-            ['body' => 'This is a bad post.', 'author' => 'Jane Doe'],
-            ['body' => 'I hate Laravel.', 'author' => 'Brother Joe'],
-            ['body' => 'This is a terrible post.', 'author' => 'John Deere'],
-            ['body' => 'I dislike Laravel.', 'author' => 'Jane Maria']
-        ]);
-        
-        // 2nd post
-        $php_post = Post::create([
+
+        $phpPost = Post::create([
             'title' => 'PHP 8.4 is in the making',
-            'author' => 'John Doe',
+            'author_id' => rand(1, 10),
             'body' => 'PHP 8.4 is in the making and it has many new features.',
-            'category_id' => $php_category->id,    
-        ]);
-        $php_post->comments()->createMany([
-            ['body' => 'This is a great post.', 'author' => 'John Doe'],
-            ['body' => 'I love Laravel.', 'author' => 'Jane Doe'],
+            'category_id' => $phpCategory->id,    
+        ])->comments()->createMany([
+            ['body' => 'This is a great post.', 'author_id' => rand(1, 10)],
+            ['body' => 'I love PHP.', 'author_id' => rand(1, 10)],
         ]);
 
-        // 3rd post about JS
-        $js_post = Post::create([
+        $jsPost = Post::create([
             'title' => 'JS and NPM',
-            'author' => 'Some random guy',
+            'author_id' => rand(1, 10),
             'body' => 'Not so informative',
-            'category_id' => $javascript_category->id,
+            'category_id' => $javascriptCategory->id,
+        ])->comments()->createMany([
+            ['body' => 'Very helpful JS information.', 'author_id' => rand(1, 10)],
         ]);
-        $js_post->comments()->createMany([
-            ['body' => 'Very helpful JS information.', 'author' => 'Bob'],
-        ]);
-        
-        //4th post
-        $css_post = Post::create([
-            'title' => 'Tailwind CSS',
-            'author' => 'MJ',
-            'body' => 'Too long',
-            'category_id' => $css_category->id,
-        ]);
-        $css_comments = Comment::factory()->count(75)->make()->toArray();
-        $css_post->comments()->createMany($css_comments);
 
-        Manufacturer::factory()->count(5)->create();
-        CarModel::factory()->count(5)->create();
+        $cssPost = Post::create([
+            'title' => 'Tailwind CSS',
+            'author_id' => rand(1, 10),
+            'body' => 'Too long',
+            'category_id' => $cssCategory->id,
+        ]);
+
+        // Generate comments using a factory
+        Comment::factory()->count(75)->for($cssPost)->create();
     }
 }
