@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Category;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -25,11 +26,6 @@ class PostController extends Controller
      */
     public function create()
     {
-        if (Gate::denies('update-post', new Post())) {
-            // Handle unauthorized access (e.g., show an error message or redirect)
-            abort(403, 'Unauthorized action.');
-        }
-
         $users = User::all();
         $categories = Category::all();
         $post = new Post;
@@ -87,6 +83,8 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $post = Post::findOrFail($id);
+
         if (Gate::denies('update-post', $post)) {
             // Handle unauthorized access (e.g., show an error message or redirect)
             abort(403, 'Unauthorized action.');
