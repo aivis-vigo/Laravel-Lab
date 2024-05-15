@@ -25,6 +25,11 @@ class PostController extends Controller
      */
     public function create()
     {
+        if (Gate::denies('update-post', new Post())) {
+            // Handle unauthorized access (e.g., show an error message or redirect)
+            abort(403, 'Unauthorized action.');
+        }
+
         $users = User::all();
         $categories = Category::all();
         $post = new Post;
@@ -82,6 +87,11 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        if (Gate::denies('update-post', $post)) {
+            // Handle unauthorized access (e.g., show an error message or redirect)
+            abort(403, 'Unauthorized action.');
+        }
+
         //very basic validation - there shold be at least some data in the fields
         if ($request->title == null || $request->author_id == null || $request->body == null) {
             //if you deleted everyting - go back and fill it!

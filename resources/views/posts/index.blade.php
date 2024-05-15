@@ -7,9 +7,11 @@
 <body>
     <h1>Welcome to the programming blog</h1>
 
-    <a href="{{ route('posts.create') }}">
-        Create new blog post
-    </a>
+    @auth
+        <a href="{{ route('posts.create') }}">
+            Create new blog post
+        </a>
+    @endauth
     
     @foreach ($posts as $post)
         
@@ -23,16 +25,18 @@
         </p>
         <p>{{ $post->body }}</p>
 
-        <form method="GET" action="{{ route('posts.edit', $post->id) }}">
-            @csrf
-            <button type="submit">Edit post</button>
-        </form>
+        @can('update-post', $post)
+            <form method="GET" action="{{ route('posts.edit', $post->id) }}">
+                @csrf
+                <button type="submit">Edit post</button>
+            </form>
 
-        <form method="POST" action="{{ route('posts.destroy', $post->id) }}">
-            @csrf
-            @method('DELETE')
-            <button type="submit">Delete post</button>
-        </form>
+            <form method="POST" action="{{ route('posts.destroy', $post->id) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit">Delete post</button>
+            </form>
+        @endcan
 
     @endforeach
 
